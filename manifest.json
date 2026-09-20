@@ -1,12 +1,19 @@
 {
-  "background_color": "#ffffff",
-  "dir": "ltr",
-  "display": "standalone",
   "name": "Fun Calculator with Quiz and Craze",
-  "orientation": "any",
-  "scope": "/",
   "short_name": "Fun Calculator",
-  "start_url": "/",
+  "description": "A premium fun and scientific calculator with quiz and craze mode.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
   "theme_color": "#ffffff",
-  "description": "A premium fun and scientific calculator with quiz and craze mode."
+  "dir": "ltr",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1011/1011812.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
