@@ -1,15 +1,12 @@
 {
-  "name": "Premium Calculator",
-  "short_name": "Calculator",
-  "start_url": "/index.html",
+  "background_color": "#ffffff",
+  "dir": "ltr",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#1e1b4b",
-  "icons": [
-    {
-      "src": "https://img.icons8.com/color/512/calculator.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "name": "Fun Calculator with Quiz and Craze",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Fun Calculator",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "description": "A premium fun and scientific calculator with quiz and craze mode."
 }
