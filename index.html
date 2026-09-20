@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Fun & Scientific Calculator 🚀</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+        :root {
+            --bg-grad: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --text-main: #e2e8f0;
+            --text-glow: 0 0 10px rgba(56, 189, 248, 0.5);
+            --btn-bg: rgba(255, 255, 255, 0.05);
+            --btn-hover: rgba(255, 255, 255, 0.15);
+            --accent-op: linear-gradient(135deg, #ff7eb3 0%, #ff758c 100%);
+            --accent-eq: linear-gradient(135deg, #42e695 0%, #3bb2b8 100%);
+            --accent-clear: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        }
+
+        body.light {
+            --bg-grad: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --text-main: #333;
+            --text-glow: none;
+            --btn-bg: rgba(255, 255, 255, 0.5);
+            --btn-hover: rgba(255, 255, 255, 0.8);
+        }
+
+        body.neon {
+            --bg-grad: #050505;
+            --glass-bg: rgba(10, 10, 10, 0.8);
+            --glass-border: #00ffcc;
+            --text-main: #00ffcc;
+            --text-glow: 0 0 8px #00ffcc;
+            --btn-bg: rgba(0, 255, 204, 0.1);
+            --btn-hover: rgba(0, 255, 204, 0.3);
+            --accent-op: #ff007f;
+            --accent-eq: #00b4d8;
+            --accent-clear: #ff0054;
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; background: var(--bg-grad); transition: 0.5s ease;
+            overflow: hidden;
+        }
+
+        /* Abstract Floating Background Orbs */
+        .orb {
+            position: absolute; border-radius: 50%; filter: blur(70px); z-index: -1;
+            animation: float 8s infinite ease-in-out alternate;
+        }
+        .orb-1 { width: 350px; height: 350px; background: #ff7eb3; top: 5%; left: 15%; opacity: 0.4; }
+        .orb-2 { width: 450px; height: 450px; background: #3bb2b8; bottom: 5%; right: 10%; opacity: 0.3; animation-delay: -4s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(40px, -60px) scale(1.1); }
+        }
+
+        .main-container { display: flex; gap: 20px; z-index: 1; }
+
+        /* Main Glass Calculator Box */
+        .calculator {
+            background: var(--glass-bg);
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid rgba(255,255,255,0.3);
+            border-left: 1px solid rgba(255,255,255,0.3);
+            border-radius: 28px;
+            box-shadow: var(--glass-shadow);
+            padding: 25px; width: 370px;
+            transition: width 0.3s ease;
+        }
+
+        .top-bar { display: flex; justify-content: space-between; margin-bottom: 15px; gap: 8px; }
+        .top-bar button {
+            background: var(--btn-bg); color: var(--text-main); border: 1px solid var(--glass-border);
+            padding: 8px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 500;
+            cursor: pointer; transition: 0.3s;
+        }
+        .top-bar button:hover { background: var(--btn-hover); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
+        .prank-bar, .quiz-info-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.2); padding: 10px 15px; border-radius: 12px;
+            margin-bottom: 15px; font-size: 0.85rem; color: var(--text-main);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .quiz-info-bar {
+            display: none; background: rgba(16, 185, 129, 0.15);
+            border-color: #10b981; color: #10b981; font-weight: 600;
+        }
+
+        .prank-toggle {
+            padding: 4px 12px; background: #ff4b2b; color: #fff; border: none;
+            border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        .prank-toggle.active { background: #10b981; }
+
+        /* Premium Display */
+        #display {
+            width: 100%; height: 75px; background: transparent; border: none;
+            color: var(--text-main); font-size: 2.2rem; text-align: right;
+            text-shadow: var(--text-glow); margin-bottom: 20px;
+            outline: none; font-weight: 300; letter-spacing: 2px;
+            border-bottom: 1px solid var(--glass-border); padding: 0 10px;
+        }
+
+        .buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        
+        /* 3D Glass Buttons */
+        button {
+            background: var(--btn-bg); color: var(--text-main); 
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid rgba(255,255,255,0.2); 
+            border-left: 1px solid rgba(255,255,255,0.2);
+            padding: 16px; font-size: 1.2rem; border-radius: 16px; cursor: pointer;
+            transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        button:hover { background: var(--btn-hover); transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.2); }
+        button:active { transform: translateY(1px) scale(0.95); }
+
+        .operator { background: var(--accent-op); color: #fff; border: none; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .equal { background: var(--accent-eq); color: #fff; grid-column: span 2; border: none; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .clear { background: var(--accent-clear); color: #fff; border: none; font-weight: 600; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        
+        .sub-btn { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: #fff; grid-column: span 4; border: none; margin-top: 5px; 
+            font-weight: 600; letter-spacing: 1px;
+        }
+
+        .sci-btn { background: rgba(255,255,255,0.02); display: none; font-size: 1rem; }
+        body.sci-active .sci-btn { display: block; }
+        body.sci-active .calculator { width: 480px; }
+        body.sci-active .buttons { grid-template-columns: repeat(5, 1fr); }
+
+        /* Modals & History */
+        .history-panel {
+            background: var(--glass-bg); backdrop-filter: blur(18px);
+            border-radius: 24px; border: 1px solid var(--glass-border);
+            padding: 20px; width: 250px; display: none; color: var(--text-main);
+            box-shadow: var(--glass-shadow);
+        }
+        .history-item { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 12px; margin-bottom: 8px; font-size: 0.85rem; border: 1px solid var(--glass-border); }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); z-index: 100;
+            justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: rgba(30, 27, 75, 0.85); backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border); border-radius: 24px; padding: 30px;
+            width: 350px; text-align: center; color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+        .level-btn { 
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); 
+            padding: 12px; width: 100%; border-radius: 12px; margin-bottom: 10px; 
+            color: #fff; cursor: pointer; transition: 0.3s; font-weight: 500;
+        }
+        .level-btn:hover { background: rgba(255,255,255,0.15); transform: translateY(-2px); }
+        .toggle-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .toggle-btn { background: rgba(255,255,255,0.05); color: #aaa; border: 1px solid #444; padding: 6px 12px; font-size: 0.8rem; border-radius: 8px; cursor: pointer; }
+        .toggle-btn.active { background: #6366f1; color: #fff; border-color: #6366f1; }
+        .buy-btn { background: #10b981; color: white; border: none; width: 100%; padding: 10px; margin-top: 10px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Background Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="main-container">
+        <!-- History Panel -->
+        <div id="historyPanel" class="history-panel">
+            <h4>📜 History</h4>
+            <hr style="border-color: rgba(255,255,255,0.1); margin: 10px 0;">
+            <div id="historyList"></div>
+        </div>
+
+        <!-- Calculator Box -->
+        <div class="calculator">
+            <div class="top-bar">
+                <button onclick="toggleTheme()">🎨 Theme</button>
+                <button onclick="toggleScientific()">🧪 Sci</button>
+                <button onclick="toggleHistory()">🕒 History</button>
+                <button onclick="openQuizLevels()" style="background: rgba(16, 185, 129, 0.2); border-color: #10b981; color: #10b981;">🧠 Quiz</button>
+            </div>
+
+            <!-- Prank Mode Toggle Bar -->
+            <div id="prankBarContainer" class="prank-bar">
+                <span>🤡 Prank Mode:</span>
+                <button id="prankToggleBtn" class="prank-toggle active" onclick="togglePrankMode()">ON</button>
+            </div>
+
+            <!-- Quiz Timer, Score & Exit Bar -->
+            <div id="quizInfoBar" class="quiz-info-bar">
+                <span id="quizScoreText">Score: 0/10</span>
+                <span id="quizTimerText" style="color: #ff4b2b;">⏳ 15s</span>
+                <button onclick="exitQuiz()" style="background:#ff4b2b; color:#fff; border:none; padding:4px 10px; border-radius:8px; font-size:0.75rem; cursor:pointer; font-weight:bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">❌ Exit</button>
+            </div>
+
+            <input type="text" id="display" readonly placeholder="0">
+            
+            <div class="buttons">
+                <button class="sci-btn" onclick="appendValue('Math.sin(')">sin</button>
+                <button class="sci-btn" onclick="appendValue('Math.cos(')">cos</button>
+                <button class="sci-btn" onclick="appendValue('Math.tan(')">tan</button>
+                <button class="sci-btn" onclick="appendValue('Math.sqrt(')">√</button>
+                <button class="sci-btn" onclick="appendValue('**2')">x²</button>
+
+                <button class="clear" onclick="clearDisplay()">C</button>
+                <button class="operator" onclick="appendValue('/')">÷</button>
+                <button class="operator" onclick="appendValue('*')">×</button>
+                <button class="operator" onclick="deleteLast()">⌫</button>
+
+                <button onclick="appendValue('7')">7</button>
+                <button onclick="appendValue('8')">8</button>
+                <button onclick="appendValue('9')">9</button>
+                <button class="operator" onclick="appendValue('-')">−</button>
+
+                <button onclick="appendValue('4')">4</button>
+                <button onclick="appendValue('5')">5</button>
+                <button onclick="appendValue('6')">6</button>
+                <button class="operator" onclick="appendValue('+')">+</button>
+
+                <button onclick="appendValue('1')">1</button>
+                <button onclick="appendValue('2')">2</button>
+                <button onclick="appendValue('3')">3</button>
+                <button onclick="appendValue('.')">.</button>
+
+                <button onclick="appendValue('0')">0</button>
+                <button class="equal" onclick="calculate()">=</button>
+
+                <!-- Subscription Button -->
+                <button class="sub-btn" onclick="openSubscription()">✨ Upgrade to Pro</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Level Selection Modal -->
+    <div id="quizLevelModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px; color: #38bdf8;">🧠 Select Quiz Level</h3>
+            <button class="level-btn" style="border-left: 4px solid #10b981;" onclick="startQuiz(1)">🟢 Level 1 (Easy)</button>
+            <button class="level-btn" style="border-left: 4px solid #f59e0b;" onclick="startQuiz(2)">🟡 Level 2 (Medium)</button>
+            <button class="level-btn" style="border-left: 4px solid #ff4b2b;" onclick="startQuiz(3)">🔴 Level 3 (Hard)</button>
+            <button class="level-btn" style="background: rgba(0,0,0,0.4); border:none; margin-top: 10px;" onclick="closeQuizLevels()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Working Subscription Modal -->
+    <div id="subModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 10px; color: #38bdf8;">Choose Your Plan</h3>
+            <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 15px;">Get guaranteed 100 right answers & advanced math engines.</p>
+            <div class="toggle-container">
+                <button id="monthlyBtn" class="toggle-btn active" onclick="setBilling('monthly')">Monthly</button>
+                <button id="yearlyBtn" class="toggle-btn" onclick="setBilling('yearly')">Yearly (20% Off)</button>
+            </div>
+            
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: left;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span style="font-weight: 600;">Pro Pass</span>
+                    <span id="priceDisplay" style="color: #10b981; font-weight: bold;">₹100 / mo</span>
+                </div>
+                <ul style="font-size: 0.75rem; color: #cbd5e1; list-style: none;">
+                    <li><span style="color: #10b981;">✓</span> Guaranteed Right Answers</li>
+                    <li><span style="color: #10b981;">✓</span> Bypass Prank Mode</li>
+                </ul>
+                <button class="buy-btn" onclick="subscribeAlert()">Buy Plan Now 🚀</button>
+            </div>
+            <button class="level-btn" style="background: rgba(0,0,0,0.4); border:none; margin-top: 15px;" onclick="closeSubscription()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById('display');
+        const modal = document.getElementById('subModal');
+        const quizLevelModal = document.getElementById('quizLevelModal');
+        const historyPanel = document.getElementById('historyPanel');
+        const historyList = document.getElementById('historyList');
+        const priceDisplay = document.getElementById('priceDisplay');
+        const monthlyBtn = document.getElementById('monthlyBtn');
+        const yearlyBtn = document.getElementById('yearlyBtn');
+        const prankToggleBtn = document.getElementById('prankToggleBtn');
+        const prankBarContainer = document.getElementById('prankBarContainer');
+        const quizInfoBar = document.getElementById('quizInfoBar');
+        const quizScoreText = document.getElementById('quizScoreText');
+        const quizTimerText = document.getElementById('quizTimerText');
+
+        let isYearly = false;
+        let prankMode = true; 
+
+        let isQuizMode = false;
+        let quizLevel = 1;
+        let quizQuestionNo = 0;
+        let quizScore = 0;
+        let currentQuizAnswer = 0;
+        let currentQuestionText = "";
+        let userTypedAnswer = "";
+        const totalQuizQuestions = 10;
+        let quizTimer = null;
+        let timeLeft = 15;
+
+        function playClickSound() {
+            try {
+                let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch (e) {}
+        }
+
+        function appendValue(value) {
+            playClickSound();
+            
+            // Visual symbol replace for nice UI but eval compatibility
+            if (value === '÷') value = '/';
+            if (value === '×') value = '*';
+            if (value === '−') value = '-';
+
+            if (isQuizMode) {
+                if (!isNaN(value) || value === '-') {
+                    userTypedAnswer += value;
+                    display.value = currentQuestionText + userTypedAnswer;
+                }
+            } else {
+                display.value += value;
+            }
+        }
+
+        function clearDisplay() {
+            playClickSound();
+            if (isQuizMode) {
+                userTypedAnswer = "";
+                display.value = currentQuestionText + userTypedAnswer;
+            } else {
+                display.value = '';
+            }
+        }
+
+        function deleteLast() {
+            playClickSound();
+            if (isQuizMode) {
+                if (userTypedAnswer.length > 0) {
+                    userTypedAnswer = userTypedAnswer.slice(0, -1);
+                    display.value = currentQuestionText + userTypedAnswer;
+                }
+            } else {
+                display.value = display.value.slice(0, -1);
+            }
+        }
+
+        function togglePrankMode() {
+            prankMode = !prankMode;
+            if (prankMode) {
+                prankToggleBtn.innerText = "ON";
+                prankToggleBtn.classList.add('active');
+            } else {
+                prankToggleBtn.innerText = "OFF";
+                prankToggleBtn.classList.remove('active');
+            }
+        }
+
+        function openQuizLevels() {
+            playClickSound();
+            quizLevelModal.style.display = 'flex';
+        }
+
+        function closeQuizLevels() {
+            quizLevelModal.style.display = 'none';
+        }
+
+        function startQuiz(level) {
+            playClickSound();
+            quizLevel = level;
+            closeQuizLevels();
+            isQuizMode = true;
+            quizQuestionNo = 1;
+            quizScore = 0;
+            prankBarContainer.style.display = 'none';
+            quizInfoBar.style.display = 'flex';
+            generateNextQuestion();
+        }
+
+        function exitQuiz() {
+            playClickSound();
+            if (quizTimer) clearInterval(quizTimer);
+            isQuizMode = false;
+            prankBarContainer.style.display = 'flex';
+            quizInfoBar.style.display = 'none';
+            display.value = "";
+        }
+
+        function generateNextQuestion() {
+            if (quizTimer) clearInterval(quizTimer);
+
+            if (quizQuestionNo > totalQuizQuestions) {
+                if (quizTimer) clearInterval(quizTimer);
+                display.value = `L${quizLevel} Over! Score: ${quizScore}/${totalQuizQuestions}`;
+                isQuizMode = false;
+                prankBarContainer.style.display = 'flex';
+                quizInfoBar.style.display = 'none';
+                return;
+            }
+
+            quizScoreText.innerText = `L${quizLevel} | Score: ${quizScore}/${totalQuizQuestions}`;
+            timeLeft = 15;
+            quizTimerText.innerText = `⏳ ${timeLeft}s`;
+
+            let num1, num2, op;
+            let ops = ['+', '-'];
+
+            if (quizLevel === 1) {
+                num1 = Math.floor(Math.random() * 15) + 1;
+                num2 = Math.floor(Math.random() * 15) + 1;
+                ops = ['+', '-'];
+            } else if (quizLevel === 2) {
+                num1 = Math.floor(Math.random() * 25) + 5;
+                num2 = Math.floor(Math.random() * 15) + 2;
+                ops = ['+', '-', '*'];
+            } else {
+                num1 = Math.floor(Math.random() * 45) + 10;
+                num2 = Math.floor(Math.random() * 25) + 5;
+                ops = ['+', '-', '*'];
+            }
+
+            op = ops[Math.floor(Math.random() * ops.length)];
+            if (op === '-' && num1 < num2) {
+                let temp = num1; num1 = num2; num2 = temp;
+            }
+
+            currentQuizAnswer = eval(`${num1} ${op} ${num2}`);
+            // Replace * with × and / with ÷ just for visual representation
+            let visualOp = op;
+            if(op === '*') visualOp = '×';
+            if(op === '/') visualOp = '÷';
+            if(op === '-') visualOp = '−';
+
+            currentQuestionText = `Q${quizQuestionNo}: ${num1} ${visualOp} ${num2} = `;
+            userTypedAnswer = "";
+            display.value = currentQuestionText + userTypedAnswer;
+
+            quizTimer = setInterval(() => {
+                timeLeft--;
+                quizTimerText.innerText = `⏳ ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(quizTimer);
+                    alert(`⏱️ Time Up! Sahi jawab ${currentQuizAnswer} tha.`);
+                    quizQuestionNo++;
+                    generateNextQuestion();
+                }
+            }, 1000);
+        }
+
+        function checkQuizAnswer() {
+            if (quizTimer) clearInterval(quizTimer);
+            let userAnswer = parseInt(userTypedAnswer.trim());
+
+            if (userAnswer === currentQuizAnswer) {
+                quizScore++;
+                alert("Sahi Jawab! 🎉");
+            } else {
+                alert(`Galat! Sahi jawab ${currentQuizAnswer} tha.`);
+            }
+
+            quizQuestionNo++;
+            generateNextQuestion();
+        }
+
+        function calculate() {
+            playClickSound();
+            try {
+                if (isQuizMode) {
+                    checkQuizAnswer();
+                    return;
+                }
+
+                let currentVal = display.value.trim();
+                let realResult = eval(currentVal); 
+                let result = "";
+
+                if (prankMode) {
+                    let prankType = Math.random();
+
+                    if (prankType < 0.5) {
+                        const funnyJokes = [
+                            "Pahadon mein aag lag gayi! 🔥",
+                            "Dimag mat khao, chai piyo! ☕",
+                            "Iska jawab toh Einstein ko bhi nahi pata! 🤓",
+                            "Error 404: Math not found! ❌",
+                            "Pehle 100 rupye do, tab answer dunga! 💸",
+                            "Tumse na ho payega! 😂"
+                        ];
+                        result = funnyJokes[Math.floor(Math.random() * funnyJokes.length)];
+                    } else {
+                        if (!isNaN(realResult)) {
+                            let twists = [2, 3, -1, 5, 10, 42];
+                            let randomTwist = twists[Math.floor(Math.random() * twists.length)];
+                            result = realResult + randomTwist;
+                        } else {
+                            result = 420;
+                        }
+                    }
+                } else {
+                    result = realResult; 
+                }
+
+                addHistory(currentVal + " = " + result);
+                display.value = result;
+            } catch (error) {
+                display.value = "Error";
+            }
+        }
+
+        function addHistory(text) {
+            let item = document.createElement('div');
+            item.className = 'history-item';
+            item.innerText = text;
+            historyList.prepend(item);
+        }
+
+        let themes = ['', 'light', 'neon'];
+        let currentThemeIndex = 0;
+        function toggleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            document.body.className = document.body.classList.contains('sci-active') ? 'sci-active ' + themes[currentThemeIndex] : themes[currentThemeIndex];
+        }
+
+        function toggleScientific() {
+            document.body.classList.toggle('sci-active');
+        }
+
+        function toggleHistory() {
+            historyPanel.style.display = historyPanel.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function openSubscription() {
+            modal.style.display = 'flex';
+        }
+
+        function closeSubscription() {
+            modal.style.display = 'none';
+        }
+
+        function setBilling(type) {
+            if (type === 'monthly') {
+                isYearly = false;
+                monthlyBtn.classList.add('active');
+                yearlyBtn.classList.remove('active');
+                priceDisplay.innerText = "₹100 / mo";
+            } else {
+                isYearly = true;
+                yearlyBtn.classList.add('active');
+                monthlyBtn.classList.remove('active');
+                priceDisplay.innerText = "₹960 / yr";
+            }
+        }
+
+        function subscribeAlert() {
+            alert("🎉 Badhai ho! Aapka Pro Plan activate ho gaya hai. Prank mode bypass kar diya gaya hai!");
+            prankMode = false;
+            prankToggleBtn.innerText = "OFF";
+            prankToggleBtn.classList.remove('active');
+            closeSubscription();
+        }
+
+        // --- KEYBOARD SUPPORT LOGIC ---
+        document.addEventListener('keydown', function(event) {
+            let key = event.key;
+
+            if (!isNaN(key) || key === '.') {
+                appendValue(key);
+            }
+            else if (['+', '-', '*', '/'].includes(key)) {
+                appendValue(key);
+            }
+            else if (key === 'Enter' || key === '=') {
+                event.preventDefault();
+                calculate();
+            }
+            else if (key === 'Backspace') {
+                deleteLast();
+            }
+            else if (key === 'c' || key === 'C') {
+                clearDisplay();
+            }
+        });
+        // ------------------------------
+    </script>
+
+</body>
+</html>
